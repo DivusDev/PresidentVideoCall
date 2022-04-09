@@ -1,7 +1,12 @@
-import logo from "./logo.svg";
-import "./App.css";
+
 import React, { useEffect, useRef } from "react";
-const App = () => {
+
+
+
+
+
+const VideoComponent = () => {
+  
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -23,11 +28,10 @@ const App = () => {
 
   return (
     <div>
-      <div>
+
         <video ref={videoRef} />
-      </div>
     </div>
   );
 };
 
-export default App;
+export default VideoComponent;

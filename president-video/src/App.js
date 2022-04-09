@@ -17,6 +17,7 @@ import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import Navbar from "./Navbar";
 import "./App.scss";
 import { useState } from "react";
+import VideoComponent from "./VideoComponent";
 
 function App() {
   //state
@@ -35,7 +36,9 @@ function App() {
     <>
       <Navbar />
       <div className="video-area">
-        <div className="video-container"></div>
+        <div className="video-container">
+          <VideoComponent />
+        </div>
       </div>
 
       <div className="comment-area">
