@@ -11,3 +11,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+
+.page-container {
+  padding: 10px;
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: grey;
+}
+
+
+.box {
+  background-color: black;
+  color: white;
+  border-radius: 20px;
+  margin: 20px;
+  align-items: center;
+  text-align: center;
+  vertical-align:middle;
+}

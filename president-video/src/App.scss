@@ -1,0 +1,135 @@
+
+
+
+.video-area {
+  width: 100%;
+  min-height: 80vh;
+  background-color: black;
+
+  display: flex;
+  justify-content: center;
+
+  .video-container {
+    height: 80vh;
+    aspect-ratio: 9/5;
+    background-color: white;
+  }
+}
+.comment-area {
+  background-color: rgb(235, 241, 225);
+  min-height: 1000px;
+  // min-width: 100vw;
+  padding:  40px 10%;
+  .profile-info {
+    height: 200px;
+    width: 100%;
+    background-color: rgb(219, 209, 209);
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+
+    .left, .right, .middle {
+      padding-right: 50px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 30%;
+      span {
+        &.profile-name {
+          font-size: 1.8rem;
+          margin-left: 20px;
+        }
+        &.user-id {
+          font-size: 1.4rem;
+          margin-right: 20px;
+        }
+        &.speaker-name {
+          font-size: 2.2rem;
+          font-weight: bold;
+        }
+      }
+    }
+   
+  }
+  
+
+  .question-box {
+    margin-top: 50px;
+
+    height: 200px;
+    width: 100%;
+    background-color: rgb(219, 209, 209);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    input {
+      font-size: 1.5rem;
+      width: 80%;
+      background-color: rgb(219, 209, 209);
+      border: none;
+      padding: 40px;
+
+
+    }
+  }
+}
+
+.profile-picture {
+  border-radius: 100%;
+  height: 100px;
+  width: 100px;
+  background-image: url('https://ntvb.tmsimg.com/assets/assets/57282_v9_bc.jpg?w=270&h=360');
+  background-size: cover;
+}
+
+.navbar{
+  background-color: green !important;
+}
+
+
+.question-button {
+  border: 2px solid grey;
+  transition: .4s;
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
+  margin-left: 30px;
+  &:active {
+    background-color:rgba(0, 0, 0, 0.3)
+  }
+  &:hover{
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px !important;
+    cursor: pointer;
+  }
+}
+
+
+
+
+.thumbs {
+  
+  &.up { color: green; }
+  &.down {
+    color: red;
+    transform: rotate(180deg);
+   }
+  
+  transition:  .5s !important;
+
+  height: 50px !important;
+  width: 50px !important;
+
+  &:hover {
+    cursor: pointer;
+  }  
+
+  &:active {
+    color: greenyellow;
+  }
+}
