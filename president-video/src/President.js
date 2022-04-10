@@ -139,7 +139,7 @@ function President() {
 
   const sendWebCam = async () => {
     console.log(connections)
-    const mediaStream = await navigator.getUserMedia( { video: true, audio: true })
+    const mediaStream = await navigator.mediaDevices.getUserMedia( { video: true, audio: true })
 
     // const mediaStream = await navigator.mediaDevices.getDisplayMedia( { video: true, audio: true })
     showVideo(videoRef.current, mediaStream)
