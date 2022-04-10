@@ -14,14 +14,31 @@
       max-height: 80vh;
       height: auto;
       width: 100vw;
+      &.president {
+        max-height: 40vh;
+      }
     }
   }
 }
+
+
 .comment-area {
   background-color: rgb(235, 241, 225);
   min-height: 1000px;
   // min-width: 100vw;
   padding:  40px 10%;
+
+  .information {
+    justify-content: space-around;
+    display: flex;
+    div {
+      background-color: rgb(219, 209, 209);
+      border-radius: 5px;
+      display: flex;
+      padding: 10px 20px;
+    }
+  }
+
   .profile-info {
     height: 200px;
     width: 100%;
@@ -127,16 +144,19 @@
     transform: rotate(180deg);
    }
   
-  transition:  .5s !important;
+  transition:  .1s !important;
 
   height: 50px !important;
   width: 50px !important;
 
   &:hover {
     cursor: pointer;
+    color: white;
+
   }  
 
   &:active {
+    transition: .5s;
     color: greenyellow;
   }
 }

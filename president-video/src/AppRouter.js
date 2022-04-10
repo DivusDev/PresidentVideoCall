@@ -9,15 +9,23 @@ import Dashboard from './Dashboard';
 import President from './President';
 
 
+const Help = () => {
+  return (
+    <div>
+      <h1>You need a special link to access the president! Try again with the Right link 😉</h1>
+    </div>
+  )
+}
+
+
+
 
 const App = () => {
     return (
       <BrowserRouter>
         <Routes>
-            {/* <Route exact path="/" element={<NameInput />} />
-            <Route exact path="/overview" element={<Overview />} />
-            <Route exact path="/call" element={<Call />} /> */}
-            <Route exact path="/:connectionID" element={<Dashboard />} />
+            <Route exact path="/" element={<Help />} />
+            <Route exact path="/:presidentID" element={<Dashboard />} />
             <Route exact path="/president" element={<President />} />
 
         </Routes>

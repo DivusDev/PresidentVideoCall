@@ -16,7 +16,8 @@ const VideoComponent = () => {
 
   const getVideo = () => {
     navigator.mediaDevices
-      .getUserMedia({ video: { width: 300 } })
+    // .getDisplayMedia({video: true})
+      // .getUserMedia({ video: { width: 300 } })
       .then((stream) => {
         let video = videoRef.current;
         video.srcObject = stream;
@@ -28,10 +29,7 @@ const VideoComponent = () => {
   };
 
   return (
-    <div>
-
         <video ref={videoRef} />
-    </div>
   );
 };
 

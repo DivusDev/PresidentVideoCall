@@ -23,10 +23,13 @@ import VideoComponent from "./VideoComponent";
 import Peer from "peerjs"
 import { useEffect } from "react";
 import { useRef } from "react";
+import { ThumbDown } from "@mui/icons-material";
+import { ThumbUp } from "@mui/icons-material";
 
 
 
-var connections  = []
+// var connections  = []
+
 
 
 
@@ -34,14 +37,20 @@ function President() {
 
   
   //state
-  const [questionText, setQuestionText] = useState("THE CURRENT QUESTION WILL APPEAR HERE");
+
   const [currentPeer, setCurrentPeer] = useState();
   const [connectionReference, setConnectionReference] = useState();
-  const [connectionList, setConnectionList] = useState([]);
+  const [connections, setConnections] = useState([]);
   const [ID, setID] = useState()
   const [HostingLink, setHostingLink] = useState('')
   const [data, setData] = useState('')
   const [recievedData, setRecievedData] = useState('')
+  const [waitingRoom, setWaitingRoom] = useState(0)
+
+  const [likes, setLikes] = useState(0)
+  const [dislikes, setDislikes] = useState(0)
+  const [questionObj, setQuestionObj] = useState({});
+  const [questionIndex, setQuestionIndex] = useState(-1);
 
 
 
@@ -86,18 +95,28 @@ function President() {
     });
 
     peer.on('connection', (conn) => { 
-      connections.push(conn.peer)
+      setConnections(c => c.concat(conn.peer))
+
+      console.log('connection made!')
   
-  
+      // someone connected to the stream
+      // add to the waiting room
+      setWaitingRoom(w => w + 1)
+
       conn.on('open', function() {
         // Receive messages
-        conn.on('data', function(data) {
-          console.log('Received', data);
+        conn.on('data', function(dataPackage) {
+          console.log('Message!', dataPackage)
+          const {type, data, id} = dataPackage
+          if (type == 'like') {
+            setLikes(clikes => clikes + 1)
+          } else if (type == 'dislike') {
+            setDislikes(cdislikes => cdislikes + 1)
+          } else if (type == 'question') {
+            setQuestionObj( qObj =>({...qObj, [id]: data}))
+          }
+
         });
-        
-        console.log("SENDING MESSAGE")
-        // Send messages
-  
       });
     });
 
@@ -119,14 +138,27 @@ function President() {
 
   const sendData = async () => {
     console.log(connections)
-    //    navigator.getUserMedia( { video: true, audio: true }, (mediaStream) => {
+    const mediaStream = await navigator.getUserMedia( { video: true, audio: true })
 
-    const mediaStream = await navigator.mediaDevices.getDisplayMedia( { video: true, audio: true })
-    
+    // const mediaStream = await navigator.mediaDevices.getDisplayMedia( { video: true, audio: true })
+    showVideo(videoRef.current, mediaStream)
+
       connections.forEach( peerid => {
           currentPeer.call(peerid, mediaStream)
       })
+
+      //empty out waiting room
+      setWaitingRoom(w => 0)
       
+  }
+
+  const getQuestion = () => {
+    const questions = Object.keys(questionObj).length
+    if (questions == 0) return
+    const randomQuestionIndex = Math.floor(Math.random() * questions)
+    setQuestionIndex(randomQuestionIndex)
+
+    
   }
 
  
@@ -137,20 +169,33 @@ function President() {
       <Navbar />
       <div className="video-area">
         <div className="video-container">
-          <video ref={videoRef} className='video'/>
-
+          <video ref={videoRef} className='video president'/>
         </div>
       </div>
 
       <div className="comment-area">
+        <div className="information">
+          <div>
+            WAITING ROOM SIZE: {waitingRoom}
+          </div>
+          <div>
+            Likes : {likes} <ThumbUp  style={{color: 'green', marginLeft:'2rem'}} />
+          </div>
+          <div>
+            Dislikes : {dislikes} <ThumbDown  style={{color: 'red', marginLeft:'2rem'}} />
+          </div>
+        </div>
         <div className="question-box">
           <input
             placeholder="I have a question..."
             name="question"
-            onChange={(e) => setQuestionText(e.target.value)}
-            value={questionText}
+            value={questionIndex == -1 ? 'There have been no questions...' : Object.values(questionObj)[questionIndex]}
             disabled
           ></input>
+          <button className="question button" onClick={getQuestion}>
+            <QuestionMarkIcon />
+          </button>
+          
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
             <button className="streaming button" onClick={sendData}>

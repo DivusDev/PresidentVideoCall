@@ -1,0 +1,11 @@
+{
+  "api_key": "PwVVgx4pV165AImmIlzglJkPkYGHGLMeXZ6Lvzub",
+  "features": [
+    {
+      "message": "Do you want bold 2 or bb torch"
+    }
+  ],
+  "include_features": false,
+  "model": "custom_prediction_classification_1649559560577",
+  "version": "1"
+}

@@ -24,12 +24,16 @@ import Peer from "peerjs"
 import { useEffect } from "react";
 import { useRef } from "react";
 import { Identity } from "@mui/base";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate  } from "react-router-dom";
 
+
+//MAGE API
+import  { runModel } from './TestMage'
 
 
 var connections  = []
-
+var likes = 0;
+var dislikes = 0
 
 
 function Dashboard() {
@@ -50,8 +54,10 @@ function Dashboard() {
   const videoref = useRef()
 
   //params
-  let { connectionID } = useParams();
+  let { presidentID } = useParams();
 
+  //navigation
+  let navigator = useNavigate()
 
 
   //functions
@@ -66,13 +72,18 @@ function Dashboard() {
     var peer = new Peer();
     setCurrentPeer(peer)
 
-    peer.on('open', function(id) {
+    peer.on('open', async (id) => {
       console.log('My peer ID is: ' + id);
       
-      console.log("Trying to connect to", connectionID)
-      var conn = peer.connect(connectionID);
-
+      var conn = peer.connect(presidentID);
+      setConnectionReference(conn)
     });
+
+    peer.on('error', () => {
+      //something went wrong send them to home
+      
+      navigator('/')
+    })
 
     peer.on('connection', (conn) => { 
       connections.push(conn.peer)
@@ -84,9 +95,6 @@ function Dashboard() {
           console.log('Received', data);
         });
         
-        console.log
-        // Send messages
-  
       });
     } );
 
@@ -112,30 +120,49 @@ function Dashboard() {
     //    navigator.getUserMedia( { video: true, audio: true }, (mediaStream) => {
 
     const mediaStream = await navigator.mediaDevices.getDisplayMedia( { video: true, audio: true })
-    
+
       connections.forEach( peerid => {
           currentPeer.call(peerid, mediaStream)
       })
       
   }
 
- 
 
 
-  const createConnection = () => {
-    var conn = currentPeer.connect(connectionID);
-    console.log(connectionID)
-    console.log("adding connection ")
-    connectionList.push(conn.peer)
-  }
-  
+  const sendQuestion = async () => {
+    //test question with ML to see if it is spam and therefore NOT WORTHY
+    const SpamTestResponse = await runModel('spam', questionText)
 
-  const sendQuestion = () => {
-    console.log(`Someone asked ${questionText}`);
+    if (SpamTestResponse[0].prediction == 'spam') {
+      console.log('SPAM DETECTED, QUESTION NOT ASKED')
+      return;
+    }
+
+    const IsOffensiveResponse = await runModel('offensive', questionText)
+
+    if (IsOffensiveResponse[0].prediction ) {
+      console.log('OFFENSIVE QUESTION DETECTED, QUESTION NOT ASKED')
+      return;
+    }
+
+
+
+    const dataPackage = {
+      type: 'question',
+      id: currentPeer.id,
+      data: questionText
+    }
+    connectionReference.send(dataPackage)
+
+    setQuestionText( q => '')
   };
 
   const sendFeedback = (liked) => {
-    console.log(`Someone ${liked ? "Liked" : "Hated"} Joe's recent Comment`);
+    const dataPackage = {
+      type: liked ? 'like' : 'dislike',
+      id: currentPeer.peer
+    }
+    connectionReference.send(dataPackage)
   };
 
   return (
@@ -178,23 +205,12 @@ function Dashboard() {
             onChange={(e) => setQuestionText(e.target.value)}
             value={questionText}
           ></input>
-          <button className="question-button" onClick={sendQuestion}>
+          <button className="question button" onClick={sendQuestion}>
             <QuestionMarkIcon />
           </button>
         </div>
         <div>
           
-        <button className="question-button" onClick={() => {}}>
-            Create Peer
-          </button>
-          <button className="question-button" onClick={() => createConnection()}>
-            Connect to other Peer
-          </button>
-          <input onChange={(e) => setData(e.target.value)} placeholder='Data to send' />
-          <button className="question-button" onClick={sendData}>
-            Send data
-          </button>
-          <span>RECEIVED DATA: {recievedData}</span>
         </div>
       </div>
     </>
