@@ -45,9 +45,12 @@ function Dashboard() {
   const [connectionReference, setConnectionReference] = useState();
   const [connectionList, setConnectionList] = useState([]);
   const [ID, setID] = useState()
+  const [streamPlaying, setStreamPlaying] = useState(false)
 
   const [data, setData] = useState('')
   const [recievedData, setRecievedData] = useState('')
+
+  const [entered, setEntered] = useState(false)
 
 
   //ref
@@ -65,6 +68,7 @@ function Dashboard() {
   const showVideo = (video, stream) => {
     video.srcObject = stream
     video.onloadedmetadata = () => video.play();
+    setStreamPlaying(true)
   }
 
   useEffect(() => {
@@ -82,7 +86,7 @@ function Dashboard() {
     peer.on('error', () => {
       //something went wrong send them to home
       
-      navigator('/')
+      // navigator('/')
     })
 
     peer.on('connection', (conn) => { 
@@ -129,22 +133,34 @@ function Dashboard() {
 
 
 
-  const sendQuestion = async () => {
-    //test question with ML to see if it is spam and therefore NOT WORTHY
+  const sendQuestion = async (e) => {
+    e.preventDefault()
+
+
+        //test question with ML to see if it is spam or offensive and therefore NOT WORTHY
+
+
+    const IsOffensiveResponse = await runModel('offensive', questionText)
+
+    if (!IsOffensiveResponse || IsOffensiveResponse[0].prediction ) {
+      console.log('OFFENSIVE QUESTION DETECTED, QUESTION NOT ASKED')
+      setQuestionText( q => '')
+
+      return;
+    }
+
+
     const SpamTestResponse = await runModel('spam', questionText)
 
     if (SpamTestResponse[0].prediction == 'spam') {
       console.log('SPAM DETECTED, QUESTION NOT ASKED')
+      setQuestionText( q => '')
+
       return;
     }
 
-    const IsOffensiveResponse = await runModel('offensive', questionText)
-
-    if (IsOffensiveResponse[0].prediction ) {
-      console.log('OFFENSIVE QUESTION DETECTED, QUESTION NOT ASKED')
-      return;
-    }
-
+   
+    
 
 
     const dataPackage = {
@@ -153,8 +169,8 @@ function Dashboard() {
       data: questionText
     }
     connectionReference.send(dataPackage)
-
     setQuestionText( q => '')
+
   };
 
   const sendFeedback = (liked) => {
@@ -165,11 +181,23 @@ function Dashboard() {
     connectionReference.send(dataPackage)
   };
 
+
+
   return (
-    <>
+    <><div className={`enter-screen ${entered ? 'hide' : ''}`}>
+        <button onClick={() => setEntered(true)}>
+          Click me to enter the waiting room
+        </button>
+      </div> 
       <Navbar />
       <div className="video-area">
         <div className="video-container">
+          {!streamPlaying ? 
+          <div className='waiting-room'>
+          You are in the Waiting Room
+          </div>
+          : <></>
+}
           <video ref={videoref} className='video'/>
           {/* <VideoComponent /> */}
         </div>
@@ -198,6 +226,8 @@ function Dashboard() {
             />
           </div>
         </div>
+        <form onSubmit={sendQuestion}>
+
         <div className="question-box">
           <input
             placeholder="I have a question..."
@@ -205,10 +235,13 @@ function Dashboard() {
             onChange={(e) => setQuestionText(e.target.value)}
             value={questionText}
           ></input>
-          <button className="question button" onClick={sendQuestion}>
+          <button type='submit' className="question button">
             <QuestionMarkIcon />
           </button>
+         
         </div>
+        </form>
+
         <div>
           
         </div>

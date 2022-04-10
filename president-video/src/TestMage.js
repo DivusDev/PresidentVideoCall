@@ -1,9 +1,9 @@
 
-
+const badWords = ['fuck', 'shit', 'nigga', 'nigger', 'gay', 'fucker', 'die']
 
    const  modelNicknames = {
         'spam' : 'custom_prediction_classification_1649559560577',
-        'offensive' : 'custom_prediction_classification_1649572881066'
+        'offensive' : 'custom_prediction_classification_1649581004338'
     }
 
 
@@ -28,6 +28,11 @@
               },
             body: JSON.stringify(dataPackage)
         })
+
+        let lowercase = message.toLowerCase();
+        console.log(lowercase)
+
+        if (badWords.some( w => lowercase.indexOf(w) != -1)) return false
 
         const MAGEData = await MAGEResponse.json()
         console.log('MAGE RESPONSE', message, MAGEData)

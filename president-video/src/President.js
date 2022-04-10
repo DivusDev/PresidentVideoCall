@@ -13,6 +13,7 @@ import RecommendIcon from "@mui/icons-material/Recommend";
 import MenuIcon from "@mui/icons-material/Menu";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
+import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 
 
 // FULL COMPONENTS
@@ -91,7 +92,7 @@ function President() {
 
     peer.on('open', function(id) {
       console.log('My peer ID is: ' + id);
-      setHostingLink(`localhost:3000/${id}`)
+      setHostingLink(id)
     });
 
     peer.on('connection', (conn) => { 
@@ -136,11 +137,26 @@ function President() {
   }, [])
 
 
-  const sendData = async () => {
+  const sendWebCam = async () => {
     console.log(connections)
     const mediaStream = await navigator.getUserMedia( { video: true, audio: true })
 
     // const mediaStream = await navigator.mediaDevices.getDisplayMedia( { video: true, audio: true })
+    showVideo(videoRef.current, mediaStream)
+
+      connections.forEach( peerid => {
+          currentPeer.call(peerid, mediaStream)
+      })
+
+      //empty out waiting room
+      setWaitingRoom(w => 0)
+      
+  }
+
+  const shareScreen = async () => {
+    console.log(connections)
+
+    const mediaStream = await navigator.mediaDevices.getDisplayMedia( { video: true, audio: true })
     showVideo(videoRef.current, mediaStream)
 
       connections.forEach( peerid => {
@@ -197,18 +213,32 @@ function President() {
           </button>
           
         </div>
+        
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
-            <button className="streaming button" onClick={sendData}>
+        <button className="streaming button" onClick={sendWebCam}>
                 <VideoCameraFrontIcon style={{fontSize: '4rem'}}  />
+            </button>
+            <button className="streaming button" onClick={shareScreen}>
+                <ScreenShareIcon style={{fontSize: '4rem'}}  />
             </button>
         </div>
         <div className="question-box">
             <input
                 label="MY LINK"
                 name="question"
-                value={HostingLink}
+                value={`localhost:3000/${HostingLink}`}
                 disabled
             ></input>
+           
+        </div>
+        <div className="question-box">
+            <input
+                label="MY LINK"
+                name="question"
+                value={`https://president.loca.lt/${HostingLink}`}
+                disabled
+            ></input>
+           
         </div>
       </div>
     </>
