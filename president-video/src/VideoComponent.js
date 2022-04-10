@@ -1,17 +1,18 @@
 
 import React, { useEffect, useRef } from "react";
-
-
+import { useState } from "react";
+import io from 'socket.io-client';
 
 
 
 const VideoComponent = () => {
-  
+
   const videoRef = useRef(null);
 
   useEffect(() => {
     getVideo();
   }, [videoRef]);
+
 
   const getVideo = () => {
     navigator.mediaDevices
